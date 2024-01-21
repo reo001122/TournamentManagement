@@ -6,10 +6,20 @@ AWSを用いた大会運営Webアプリ
 - 審判: https://prod.d3c09gotxzv4ny.amplifyapp.com
 - ユーザ: https://prod.d1cy4rnmzcctck.amplifyapp.com
 
+以下にこのアプリに関する説明を行う
+- 役割
+- フロントエンド(使用方法)
+- データベース
+- バックエンド
+- アプリとしての構成
+- 今後の展望
+
 ## 役割
 林と渡辺の2人で作成した。林がAPI Gatewayの設定を含めたバックエンド側と、フロントエンド側の運営本部の作成を行なった。渡辺がフロントエンド側の審判とユーザの作成を行なった。
 
 ## フロントエンド（使用方法）
+フロントエンド側のコードを、AWS Amplifyにアップロードすることで、Webアプリ化した。
+
 ### 運営本部
 画面の構成と機能について説明する。
 
@@ -55,7 +65,7 @@ AWSを用いた大会運営Webアプリ
 <img width="381" alt="スクリーンショット 2024-01-22 0 17 22" src="https://github.com/reo001122/TournamentManagement/assets/65075435/a0492acf-d8fe-439e-8f77-de1d92f005e0">
 
 ## データベース
-ここでは3つのデータベースを用いている。
+ここでは3つのAWS dynamoDBを用いている。
 
 ### TournamentManagement-FixedCourt (table-FC)
 コート番号が確定している試合についてのデータベースである。データベースの項目は下記である。
