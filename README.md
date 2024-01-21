@@ -5,6 +5,7 @@ AWSを用いた大会運営Webアプリ
 - 運営本部: https://prod.d3gaf27dvhhmj6.amplifyapp.com 
 - 審判: https://prod.d3c09gotxzv4ny.amplifyapp.com
 - ユーザ: https://prod.d1cy4rnmzcctck.amplifyapp.com
+
 (上記について、実際に動かすことはできますが、極端な操作は行わないようにお願いします。)
 
 以下にこのアプリに関する説明を行う
