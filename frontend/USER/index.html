@@ -30,6 +30,22 @@
   <body>
     <div id="board">
       <h1>Matches</h1>
+      <!-- コート数入力フォーム Begin -->
+      <form id="input-num-of-courts" v-on:submit.prevent="handleSubmit_num_of_courts">
+        <div class="number-of-courts">
+          <label class="input-number-of-courts">Number of Courts</label>
+          <input
+            v-model="number"
+            type="number"
+            id="num-of-courts"
+            name="num-of-courts"
+          />
+        </div>
+        <div class="submit">
+          <button type="submit" v-bind:disabled="disabled_submit_number">OK</button>
+        </div>
+      </form>
+      <!-- コート数入力フォーム End -->
       <!-- タブ Begin -->
       <div id="tab">
         <div
