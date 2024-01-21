@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="board">
+      <h1>Matches</h1>
+      <!-- コート数入力フォーム Begin -->
+      <form id="input-num-of-courts" v-on:submit.prevent="handleSubmit_num_of_courts">
+        <div class="number-of-courts">
+          <label class="input-number-of-courts">Number of Courts</label>
+          <input
+            v-model="number"
+            type="number"
+            id="num-of-courts"
+            name="num-of-courts"
+          />
+        </div>
+        <div class="submit">
+          <button type="submit" v-bind:disabled="disabled_submit_number">OK</button>
+        </div>
+      </form>
+      <!-- コート数入力フォーム End -->
+      <!-- 経過時間表示 Begin -->
+      <div class="display-passed-time">
+        <label class="display-passed-time">タイマー: {{timer}}</label>
+        <button type="submit" @click="my_reload">リロード</button>
+        <label class="reload-alert" v-if="passed_time>=60 && passed_time%2==0">ページを更新しましょう！</label>
+      </div>
+      
+      <!-- 経過時間表示 End -->
+      <!-- inputフォーム Begin -->
+      <div class="input-area">
+        <!-- match入力フォーム Begin -->
+        <form id="input-form" v-on:submit.prevent="handleSubmit_match">
+          <div class="input-text">
+            <div class="input-match-name">
+              <label class="input-text0">Match</label>
+              <input
+                v-model="text0"
+                type="text"
+                id="input-text0"
+                name="match-text0"
+                placeholder="MS1"
+              />
+            </div>
+            <div class="input-player">
+              <label class="input-text">Players</label>
+              <input
+                v-model="player1"
+                type="text"
+                id="input-player1"
+                name="match-player1"
+                placeholder="kg"
+              />
+              <div class="input-text-vs">vs</div>
+              <input
+                v-model="player2"
+                type="text"
+                id="input-player2"
+                name="match-player2"
+                placeholder="sy"
+              />
+            </div>
+            <div class="input-courtNo">
+              <label class="input-text3">Court No.</label>
+              <input
+                v-model="text3"
+                type="number"
+                id="input-text3"
+                name="match-text3"
+                placeholder="1"
+              />
+            </div>
+            <div class="input-umpire">
+              <label class="input-umpire">Umpire</label>
+              <input
+                v-model="umpire"
+                type="text"
+                id="input-umpire"
+                name="match-umpire"
+                placeholder="ys、なし"
+              />
+            </div>
+          </div>
+          <div class="submit">
+            <button type="submit" v-bind:disabled="disabled_match">登録</button>
+          </div>
+        </form>
+        <!-- match入力フォーム End -->
+        <!-- reserve入力フォーム Begin -->
+        <form id="input-reserve-form" v-on:submit.prevent="handleSubmit_reserve">
+          <div class="input-text">
+            <div class="input-match-name">
+              <label class="input-text4">Reserve</label>
+              <input
+                v-model="text4"
+                type="text"
+                id="input-text4"
+                name="match-text4"
+                placeholder="エキシビ"
+              />
+            </div>
+            <div class="input-player">
+              <label class="input-text5">Players</label>
+              <input
+                v-model="player5"
+                type="text"
+                id="input-player5"
+                name="match-player5"
+                placeholder="kw"
+              />
+              <div class="input-text-vs">vs</div>
+              <input
+                v-model="player6"
+                type="text"
+                id="input-player6"
+                name="match-player6"
+                placeholder="hy"
+              />
+            </div>
+          </div>
+          <div class="submit">
+            <button type="submit" v-bind:disabled="disabled_reserve">登録</button>
+          </div>
+        </form>
+        <!-- reserve入力フォーム End -->
+      </div>
+      <!-- inputフォーム End -->
+      <!-- タブ Begin -->
+      <div id="tab">
+        <div
+          class="tab-list"
+          v-bind:class="{ '-active': filter === 'inbox' }"
+        >
+          <button v-on:click="setFilter('inbox')">試合中・控え</button>
+        </div>
+        <div
+          class="tab-list"
+          v-bind:class="{ '-active': filter === 'completed' }"
+        >
+          <button v-on:click="setFilter('completed')">終了済み</button>
+        </div>
+      </div>
+      <!-- タブ End -->
+      <!-- matchリスト Begin -->
+      <div class="matches-players-info">
+        <div class="matches">
+          <section id="match-table">
+            <h2>試合状況</h2>
+            <div class="match-main">
+              <div class="court" v-for="n in 20" v-if="n <= num_of_courts" :key="n">
+                <h3 class="court-number">Court {{n}}</h3>
+                <div class="cards">
+                  <div class="card" v-for="match in filteredmatches(n)" v-bind:key="match.match_id">
+
+                    <!-- match_name, 時刻 -->
+                    <div class="match-info" v-if="match.isEditing">
+                      <input v-model="match.match_name_sub" />
+                      <div class="match-edit-time">{{formatDate(match.edited_at)}}</div>
+                    </div>
+                    <div class="match-info" v-else v-on:click="edit_match(match.match_id)">
+                      <div class="match-name">{{match.match_name}}</div>
+                      <div class="match-edit-time-red" v-if="is_passed_threshold(match.edited_at, match.done)">{{formatDate(match.edited_at)}}</div>
+                      <div class="match-edit-time" v-else>{{formatDate(match.edited_at)}}</div>
+                    </div>
+
+                    <!-- 選手名, スコア -->
+                    <div class="match-score" v-if="match.isEditing">
+                      <div class="player">
+                        <input v-model="match.player1_sub" />
+                        <input v-model="match.score1_sub" />
+                      </div>
+                      <div class="text-vs">vs</div>
+                      <div class="player">
+                        <input v-model="match.player2_sub" />
+                        <input v-model="match.score2_sub" />
+                      </div>
+                    </div>
+                    <div class="match-score" v-else v-on:click="edit_match(match.match_id)">
+                      <div class="player">
+                        <div class="player-name">{{match.player1}}</div>
+                        <div class="player-score">{{match.score1}}</div>
+                      </div>
+                      <div class="text-vs">vs</div>
+                      <div class="player">
+                        <div class="player-name">{{match.player2}}</div>
+                        <div class="player-score">{{match.score2}}</div>
+                      </div>
+                    </div>
+
+                    <!-- 審判 -->
+                    <div class="match-umpire" v-if="match.isEditing">
+                      <input v-model="match.umpire_sub" />
+                    </div>
+                    <div class="match-umpire" v-else v-on:click="edit_match(match.match_id)">
+                      <div class="match-name">審判: {{match.umpire}}</div>
+                    </div>
+
+                    <!-- コート番号, ボタン -->
+                    <div class="match-edit" v-if="match.isEditing">
+                      <div class="court-number-edit">
+                        <input
+                          v-model="match.court_number_sub"
+                          type="number"
+                        />
+                      </div>
+                      <div class="cancel-button">
+                        <button v-on:click="cancel_edit_match(match.match_id)">キャンセル</button>
+                      </div>
+                      <div class="save-button" v-if="match.isEditing">
+                        <button v-on:click="save_match(match.match_id)" v-bind:disabled="disabled_save(match)">保存</button>
+                      </div>
+                    </div>
+                    <div class="match-edit" v-else>
+                      <div class="court-number-edit" v-on:click="edit_match(match.match_id)">Court No.{{match.court_number}}</div>
+                      <div class="delete-button">
+                        <button v-on:click="delete_match(match.match_id)">削除</button>
+                      </div>
+                      <div class="finish-button" v-if="filter === 'inbox' ">
+                        <button v-on:click="finish_match(match.match_id)">試合終了</button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+          <!-- matchリスト End -->
+          <!-- reserveリスト Begin -->
+          <section id="reserve-table">
+            <h2>コート未定控え状況</h2>
+            <div class="reserve-cards">
+              <div class="reserve-card" v-for="reserve in reserves">
+                
+                <!-- match_name, 時刻 -->
+                <div class="reserve-info" v-if="reserve.isEditing">
+                  <input v-model="reserve.match_name_sub" />
+                </div>
+                <div class="reserve-info" v-else v-on:click="edit_reserve(reserve.reserve_id)">
+                  <div class="reserve-name">{{reserve.match_name}}</div>
+                  <div class="reserve-edit-time">{{formatDate(reserve.edited_at)}}</div>
+                </div>
+
+                <!-- 選手名, スコア -->
+                <div class="reserve-score" v-if="reserve.isEditing">
+                  <div class="reserve-player">
+                    <input v-model="reserve.player1_sub" />
+                  </div>
+                  <div class="text-vs">vs</div>
+                  <div class="reserve-player">
+                    <input v-model="reserve.player2_sub" />
+                  </div>
+                </div>
+                <div class="reserve-score" v-else v-on:click="edit_reserve(reserve.reserve_id)">
+                  <div class="reserve-player">
+                    <div class="player-name">{{reserve.player1}}</div>
+                  </div>
+                  <div class="text-vs">vs</div>
+                  <div class="reserve-player">
+                    <div class="player-name">{{reserve.player2}}</div>
+                  </div>
+                </div>
+
+                <!-- コート番号, ボタン -->
+                <div class="reserve-edit" v-if="reserve.isEditing">
+                  <div class="reserve-court-number-edit">
+                    <input 
+                      v-model="reserve.court_number_sub"
+                      id="court-num-for-reserve"
+                      type="number"
+                      placeholder="移動先コート"
+                    />
+                  </div>
+                  <div class="cancel-button">
+                    <button v-on:click="cancel_edit_reserve(reserve.reserve_id)">キャンセル</button>
+                  </div>
+                  <div class="save-button" v-if="reserve.isEditing">
+                    <button v-on:click="save_reserve(reserve.reserve_id)" v-bind:disabled="disabled_reserve_save(reserve)">保存</button>
+                  </div>
+                </div>
+                <div class="reserve-edit" v-else>
+                  <div class="reserve-court-number-edit" v-on:click="edit_reserve(reserve.reserve_id)">Court No. ???</div>
+                  <div class="delete-button">
+                    <button v-on:click="delete_reserve(reserve.reserve_id)">削除</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+          <!-- reserveリスト End -->
+        </div>
+        <!-- playerの表 Begin -->
+        <div class="players">
+          <h2>各選手状況</h2>
+          <div id="players-table"></div>
+
+          <form id="input-del-player" v-on:submit.prevent="handleSubmit_del_player">
+            <div class="del-player">
+              <label class="input-del-player-label">選手名: </label>
+              <input
+                v-model="del_player"
+                type="text"
+                id="del_player"
+                name="del_player"
+              />
+            </div>
+            <div class="submit">
+              <button type="submit" v-bind:disabled="disabled_submit_player1">削除</button>
+            </div>
+          </form>
+
+          <form id="input-edit-player" v-on:submit.prevent="handleSubmit_edit_player">
+            <div class="del-player">
+              <label class="input-edit-player-label">選手名: </label>
+              <input
+                v-model="edit_player"
+                type="text"
+                id="edit_player"
+                name="edit_player"
+              />
+              <label class="input-edit-grade-label">代: </label>
+              <input
+                v-model="edit_grade"
+                type="text"
+                id="edit_grade"
+                name="edit_grade"
+              />
+            </div>
+            <div class="submit">
+              <button type="submit" v-bind:disabled="disabled_submit_player2">変更・追加</button>
+            </div>
+          </form>
+
+        </div>
+        <!-- playerの表 End -->
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
