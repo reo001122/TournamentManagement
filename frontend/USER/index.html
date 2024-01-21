@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script>
+      // ここ変更すれば自動更新時間を変えられる（単位はm秒）
+      var refreshRate = 60000; // リフレッシュする時間間隔をミリ秒で設定
+      var refreshTimeout;
+      
+      function startAutoRefresh() {
+          refreshTimeout = setTimeout(function() {
+              location.reload();
+          }, refreshRate);
+      }
+      
+      function stopAutoRefresh() {
+          clearTimeout(refreshTimeout);
+      }
+      
+      // ページ読み込み時に自動更新を開始
+      window.onload = startAutoRefresh;
+      </script>
+      
+  </head>
+  <body>
+    <div id="board">
+      <h1>Matches</h1>
+      <!-- タブ Begin -->
+      <div id="tab">
+        <div
+          class="tab-list"
+          v-bind:class="{ '-active': filter === 'inbox' }"
+        >
+          <button v-on:click="setFilter('inbox')">試合中・控え</button>
+        </div>
+        <div
+          class="tab-list"
+          v-bind:class="{ '-active': filter === 'completed' }"
+        >
+          <button v-on:click="setFilter('completed')">終了済み</button>
+        </div>
+      </div>
+      <!-- タブ End -->
+      <!-- matchリスト Begin -->
+      <section id="match-table">
+        <div class="match-main">
+          <div class="court" v-for="n in 20" v-if="n <= num_of_courts" :key="n">
+            <h2 class="court-number">Court {{n}}</h2>
+            <div class="cards">
+              <div class="card" v-for="match in filteredmatches(n)" v-bind:key="match.match_id">
+
+                <!-- match_name, 時刻 -->
+                <div class="match-info" v-if="match.isEditing">
+                  <input v-model="match.match_name_sub" />
+                  <div class="match-edit-time">{{formatDate(match.edited_at)}}</div>
+                </div>
+                <div class="match-info" v-else>
+                  <div class="match-name">{{match.match_name}}</div>
+                  <div class="match-edit-time">{{formatDate(match.edited_at)}}</div>
+                </div>
+
+                <!-- 選手名, スコア -->
+                <div class="match-score" v-if="match.isEditing">
+                  <div class="player">
+                    <input v-model="match.player1_sub" />
+                    <input v-model="match.score1_sub" />
+                  </div>
+                  <div class="text-vs">vs</div>
+                  <div class="player">
+                    <input v-model="match.player2_sub" />
+                    <input v-model="match.score2_sub" />
+                  </div>
+                </div>
+                <div class="match-score" v-else>
+                  <div class="player">
+                    <div class="player-name">{{match.player1}}</div>
+                    <div class="player-score">{{match.score1}}</div>
+                  </div>
+                  <div class="text-vs">vs</div>
+                  <div class="player">
+                    <div class="player-name">{{match.player2}}</div>
+                    <div class="player-score">{{match.score2}}</div>
+                  </div>
+                </div>
+
+                <!-- 審判 -->
+                <div class="match-umpire" v-if="match.isEditing">
+                  <input v-model="match.umpire_sub" />
+                </div>
+                <div class="match-umpire" v-else v-on:click="edit_match(match.match_id)">
+                  <div class="match-name">審判: {{match.umpire}}</div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+      <!-- matchリスト End -->
+      <!-- reserveリスト Begin -->
+      <section id="reserve-table">
+        <h2>コート未定控え状況</h2>
+        <div class="reserve-cards">
+          <div class="reserve-card" v-for="reserve in reserves">
+            
+            <!-- match_name, 時刻 -->
+            <div class="reserve-info" v-if="reserve.isEditing">
+              <input v-model="reserve.match_name_sub" />
+            </div>
+            <div class="reserve-info" v-else >
+              <div class="reserve-name">{{reserve.match_name}}</div>
+              <div class="reserve-edit-time">{{formatDate(reserve.edited_at)}}</div>
+            </div>
+
+            <!-- 選手名, スコア -->
+            <div class="reserve-score" v-if="reserve.isEditing">
+              <div class="reserve-player">
+                <input v-model="reserve.player1_sub" />
+              </div>
+              <div class="text-vs">vs</div>
+              <div class="reserve-player">
+                <input v-model="reserve.player2_sub" />
+              </div>
+            </div>
+            <div class="reserve-score" v-else >
+              <div class="reserve-player">
+                <div class="player-name">{{reserve.player1}}</div>
+              </div>
+              <div class="text-vs">vs</div>
+              <div class="reserve-player">
+                <div class="player-name">{{reserve.player2}}</div>
+              </div>
+            </div>
+
+            <!-- コート番号, ボタン -->
+            <div class="reserve-edit" v-if="reserve.isEditing">
+              <div class="reserve-court-number-edit">
+                <input 
+                  v-model="reserve.court_number_sub"
+                  id="court-num-for-reserve"
+                  type="number"
+                  placeholder="移動先コート"
+                />
+              </div>
+            </div>
+            <div class="reserve-edit" v-else>
+              <div class="reserve-court-number-edit">Court No. ???</div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+      <!-- reserveリスト End -->
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
