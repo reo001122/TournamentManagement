@@ -1,0 +1,341 @@
+@import url("https://fonts.googleapis.com/css?family=Noto+Sans+JP:400|Roboto:400,700&display=swap");
+
+body {
+  font-family: "Roboto", "Noto Sans JP", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #000;
+  background: white;
+}
+
+*:focus {
+  outline: none !important;
+}
+
+#board {
+  padding: 30px 0;
+  margin: 30px 30px;
+  border-top: 7px solid #e6e6e6;
+  border-bottom: 7px solid #e6e6e6;
+}
+
+#board h1 {
+  font-size: 30px;
+  text-align: center;
+  margin: 0;
+}
+
+#tab {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding: 0;
+  margin: 15px 0 0 0;
+  position: relative;
+}
+
+#tab::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  border-bottom: 1px solid #e6e6e6;
+  position: absolute;
+  left: 0;
+  bottom: 3px;
+}
+
+#tab .tab-list {
+  margin: 0 10px;
+}
+
+#tab .tab-list.-active button {
+  border-bottom: 7px solid #50bdd8;
+}
+
+#tab button {
+  position: relative;
+  background: none;
+  border: none;
+  padding: 20px 15px;
+  text-align: center;
+}
+
+#input-form {
+  display: flex;
+  width: 100%;
+  margin: 30px 0 0 0;
+}
+
+#input-form .input-text {
+  width: 100%;
+}
+
+#input-form .input-match-name {
+  display: flex;
+}
+
+#input-form .input-player {
+  display: flex;
+}
+
+#input-form .input-courtNo  {
+  display: flex;
+}
+
+#input-form .input-text label {
+  min-width: 80px;
+  line-height: 30px;
+  margin: 0 5px 0 0;
+}
+
+#input-form .input-text input[type="text"] {
+  width: 100%;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #e6e6e6;
+  border-radius: 5px 5px 5px 5px;
+  padding: 5px 10px;
+  box-sizing: border-box;
+}
+
+#input-form .input-text input[type="number"] {
+  width: 100%;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #e6e6e6;
+  border-radius: 5px 5px 5px 5px;
+  padding: 5px 10px;
+  box-sizing: border-box;
+}
+
+#input-form .input-text-vs {
+  padding: 5px;
+  vertical-align: middle;
+}
+
+#input-form .submit {
+  display: flex;
+  min-width: 50px;
+}
+
+#input-form .submit button {
+  width: 50px;
+  line-height: 30px;
+  padding: 0;
+  border: none;
+  background: #1aaed3;
+  color: #fff;
+  border-radius: 5px 5px 5px 5px;
+  margin-left: 10px;
+}
+
+#input-form .submit button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+#match-table {
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  vertical-align: top;
+}
+
+#match-table tbody tr:nth-of-type(odd) {
+  background: #f2f2f2;
+}
+
+#match-table tbody td {
+  padding: 10px 10px 10px 0;
+  font-weight: normal;
+}
+
+#match-table tbody td:first-child {
+  padding: 11px 10px 10px 10px;
+  vertical-align: middle;
+}
+
+#match-table tbody td:nth-of-type(2) {
+  width: 100%;
+}
+
+#match-table .cell-done input {
+  display: none;
+}
+
+#match-table .cell-done label {
+  border: 1px solid #bababa;
+  border-radius: 3px;
+  cursor: pointer;
+  display: block;
+  width: 16px;
+  height: 16px;
+  position: relative;
+  transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+#match-table .cell-done label.-active {
+  background: #50accf url("../img/icon_check.svg") center center no-repeat;
+  border: none;
+}
+
+.court {
+  flex-direction: column;
+  padding: 10px;
+  min-width: 250px;
+}
+
+.match-main {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card {
+  margin-bottom: 5px;
+  border: solid 1px #a0a0a0;
+  display: flex;
+  flex-direction: column;
+}
+
+.match-info {
+  background: #50bdd8;
+  display: flex;
+  justify-content: space-between;
+}
+
+.match-score {
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+  border-bottom: #000;
+}
+
+.player {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.player-name {
+  width: 80%;
+}
+
+.player-score {
+  width: 20%;
+  text-align: right;
+}
+
+.text-vs {
+  padding-left: 5px;
+  padding-right: 20%;
+  text-align: center;
+}
+
+.match-edit {
+  display: flex;
+  flex-direction: row;
+  margin-top: 5px;
+}
+
+.court-number-edit {
+  flex-grow: 1;
+}
+
+.number-of-courts, .submit {
+  display: inline-block; /* インラインブロック要素として表示 */
+  vertical-align: middle; /* 垂直方向の中央揃え */
+  margin-right: 10px; /* 必要に応じてマージンを調整 */
+}
+
+#stopwatch {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.stopwatch-display {
+  /*font-size: 2em;*/
+  /*margin-bottom: 10px;*/
+  font-size: 48px; /* 数字のサイズを大きく */
+  font-weight: bold; /* 文字を太字に */
+  color: #1aaed3; /* 数字の色を指定 */
+  text-align: center; /* 中央揃え */
+  background-color: #f2f2f2; /* 背景色 */
+  border-radius: 10px; /* 角を丸く */
+  padding: 20px; /* 内側の余白 */
+  margin: 20px 0; /* 外側の余白 */
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2); /* 影を追加 */
+}
+
+.stopwatch-controls button {
+  font-size: 1em;
+  padding: 5px 15px;
+  margin: 0 5px;
+}
+
+
+@media screen and (min-width: 768px) {
+  body {
+    font-size: 16px;
+    padding: 0 30px;
+  }
+
+  #board {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 30px 0;
+  }
+
+  #board h1 {
+    font-size: 40px;
+  }
+
+  #tab .tab-list {
+    margin: 0 30px;
+  }
+
+  #input-form {
+    max-width: 500px;
+    margin: 50px auto 0;
+  }
+
+  #input-form .input-text label {
+    display: flex;
+    align-items: center;
+    min-width: 80px;
+    margin: 0 5px 0 0;
+  }
+
+  #input-form .input-text input[type="text"] {
+    padding: 10px 15px;
+    height: 45px;
+    line-height: 45px;
+  }
+
+  #input-form .input-text input[type="number"] {
+    padding: 10px 15px;
+    height: 45px;
+    line-height: 45px;
+  }
+
+  #input-form .submit button {
+    width: 80px;
+  }
+
+}
+
+
+/* 以下スマホにも対応できるように追加したコード これから色々試して改良を行う */
+@media only screen and (max-width: 767px) {
+  body {
+    font-size: 12px; /* スマートフォン用のフォントサイズに小さく調整 */
+    padding: 0 14px;
+  }
+
+  #board h1 {
+    font-size: 24px; /* タイトルのフォントサイズを小さく調整 */
+  }
+
+  /* 他の要素も同様にスマートフォン用にスタイルを調整 */
+}
