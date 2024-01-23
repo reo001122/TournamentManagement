@@ -190,4 +190,7 @@ API リソースは次のようになっている。
 - 同一コート内で控えの順番を入れ替えられるようにする
 - 審判用画面の機能の追加（ゲームだけだけでなくスコアのカウントも）
 
+## 参考文献
+- 西畑一馬, 須郷晋也, 岡島美咲, 扇克至, 岩本大樹. 初心者からちゃんとしたプロになる Javascript基礎入門. MdN Corporation, 2020.
+- Amazon Web Services. "AWSで基本的なWebアプリケーションを構築する". Amazon Web Services. 2024/1/5. [https://aws.amazon.com/jp/getting-started/hands-on/build-web-app-s3-lambda-api-gateway-dynamodb/](https://aws.amazon.com/jp/getting-started/hands-on/build-web-app-s3-lambda-api-gateway-dynamodb/), (参照 2024/1/20).
 
